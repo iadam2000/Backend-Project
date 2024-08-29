@@ -12,7 +12,7 @@ app.get("/api/topics", getTopics);
 app.get("/api", getApiDocs);
 
 app.use((req, res) => {
-    res.status(404).send({ msg: "Endpoint not found" });
+    res.status(404).send({ msg: "404 - Endpoint not found" });
 });
 
 app.use((err, req, res, next) => {

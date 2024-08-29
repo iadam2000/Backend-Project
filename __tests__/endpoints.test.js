@@ -1,7 +1,7 @@
 const app = require('../app/app');
 const request = require("supertest");
 const db = require("../db/connection");
-
+const endpoint = require('../endpoints.json')
 afterAll(() => db.end());
 
 describe("GET /api/topics", () => {
@@ -10,13 +10,10 @@ describe("GET /api/topics", () => {
             .get("/api/topics")
             .expect(200)
             .then(response => {
-                expect(Array.isArray(response.body.topics)).toBe(true);
+                expect(response.body.topics.length).toBeGreaterThan(0);
                 response.body.topics.forEach(topic => {
-                    console.log(topic);
                     expect(topic).toHaveProperty("slug");
                     expect(topic).toHaveProperty("description");
-                    expect(typeof topic.slug).toBe("string");
-                    expect(typeof topic.description).toBe("string");
                 });
             });
     });
@@ -34,13 +31,7 @@ describe("GET /api", () => {
             .expect(200)
             .then(data => {
                 const docs = data.body.docs;
-                for (let key in docs) {
-                    expect(typeof docs[key].exampleResponse).toBe("object");
-                    expect(docs[key]).toHaveProperty("description");
-                    expect(docs[key]).toHaveProperty("queries");
-                    expect(docs[key]).toHaveProperty("exampleResponse");
-                    expect(Array.isArray(docs[key].queries)).toBe(true);
-                }
+                expect(data.body.docs).toMatchObject(endpoint);
             });
     });
 });
