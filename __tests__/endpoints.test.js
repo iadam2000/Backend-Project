@@ -42,6 +42,7 @@ describe.only("GET /api/articles/:article_id", () => {
             .get("/api/articles/3")
             .expect(200)
             .then(({ body }) => {
+                console.log(body);
                 const article = body.article[0];
                 expect(article).toHaveProperty("article_id", 3);
                 expect(article).toHaveProperty("title");
