@@ -1,18 +1,22 @@
-const { getTopics } = require('../controllers/controller');
+const {
+    getTopics,
+    getApiDocs
+} = require('../controllers/controller');
+
 const express = require("express");
 const app = express();
 app.use(express.json());
 
 app.get("/api/topics", getTopics);
 
-app.use((err, req, res, next) => {
-    if (err.status) {
-        res.status(err.status).send({ msg: err.msg });
-    } else next(err);
+app.get("/api", getApiDocs);
+
+app.use((req, res) => {
+    res.status(404).send({ msg: "Endpoint not found" });
 });
 
 app.use((err, req, res, next) => {
-    console.log(err);
+    console.error(err.stack); 
     res.status(500).send({ msg: "Internal Server Error" });
 });
 
