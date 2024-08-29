@@ -1,7 +1,7 @@
 const app = require('../app/app');
 const request = require("supertest");
 const db = require("../db/connection");
-const endpoint = require('../endpoints.json')
+const endpoint = require('../endpoints.json');
 afterAll(() => db.end());
 
 describe("GET /api/topics", () => {
@@ -35,4 +35,32 @@ describe("GET /api", () => {
             });
     });
 });
+
+describe.only("GET /api/articles/:article_id", () => {
+    test("Should return an object containing data relevant to article_id", () => {
+        return request(app)
+            .get("/api/articles/3")
+            .expect(200)
+            .then(({ body }) => {
+                const article = body.article[0];
+                expect(article).toHaveProperty("article_id", 3);
+                expect(article).toHaveProperty("title");
+                expect(article).toHaveProperty("author");
+                expect(article).toHaveProperty("body");
+                expect(article).toHaveProperty("topic");
+                expect(article).toHaveProperty("created_at");
+                expect(article).toHaveProperty("votes");
+                expect(article).toHaveProperty("article_img_url");
+            });
+    });
+    test("Should return a 404 for non-existent article_IDs", () => {
+        return request(app)
+            .get("/api/articles/124122412")
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("Article not found");
+            });
+    });
+
+})
 
