@@ -3,7 +3,8 @@ const {
     fetchApiDocs,
     fetchArticleById,
     fetchArticles,
-    fetchCommentsById
+    fetchCommentsById,
+    insertCommentByArticleId
 } = require('../models/models');
 
 exports.getTopics = (req, res) => {
@@ -35,4 +36,20 @@ exports.getCommentsById = (req, res) => {
     fetchCommentsById(req.params.article_id).then(data => {
         return res.status(200).send(data);
     });
+};
+
+exports.postCommentByArticleId = (req, res, next) => { // Added next parameter here
+    const { article_id } = req.params;
+    const { username, body } = req.body;
+
+    // Check for missing required fields
+    if (!username || !body) {
+        return res.status(400).send({ msg: "Bad Request: 'username' and 'body' are required fields" });
+    }
+
+    insertCommentByArticleId(article_id, { username, body })
+        .then((comment) => {
+            res.status(201).send({ comment });
+        })
+        .catch(next);  // This will pass the error to the centralized error handler
 };

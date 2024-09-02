@@ -66,6 +66,17 @@ exports.fetchCommentsById = (id) => {
             `;
     return db.query(query, [id])
         .then(({ rows }) => {
-            return {comments: rows};
+            return { comments: rows };
+        });
+};
+
+exports.insertCommentByArticleId = (article_id, { username, body }) => {
+    const query = `INSERT INTO comments (article_id, author, body, votes, created_at)
+         VALUES ($1, $2, $3, 0, NOW())
+         RETURNING comment_id, votes, created_at, author, body, article_id;`;
+
+    return db.query(query, [article_id, username, body])
+        .then(({ rows }) => {
+            return rows[0];
         });
 };
