@@ -1,7 +1,8 @@
 const {
     getTopics,
     getApiDocs,
-    getArticleById
+    getArticleById,
+    getArticles
 } = require('../controllers/controller');
 
 const express = require("express");
@@ -14,6 +15,7 @@ app.get("/api", getApiDocs);
 
 app.get("/api/articles/:article_id", getArticleById);
 
+app.get("/api/articles", getArticles);
 
 //Error handling below
 app.use((req, res) => {
@@ -21,7 +23,7 @@ app.use((req, res) => {
 });
 
 app.use((err, req, res, next) => {
-    console.error(err.stack); 
+    console.error(err.stack);
     res.status(500).send({ msg: "Internal Server Error" });
 });
 

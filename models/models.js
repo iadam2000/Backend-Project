@@ -16,7 +16,43 @@ exports.fetchApiDocs = () => {
 exports.fetchArticleById = (id) => {
     const query = `SELECT * FROM articles WHERE article_id = ${id}`;
     return db.query(query)
-        .then((data) => {
+        .then(data => {
             return { article: data.rows };
+        });
+};
+
+exports.fetchArticles = () => {
+
+    const query =
+        `
+    SELECT
+    a.article_id,
+    a.title,
+    a.topic,
+    a.author,
+    a.created_at,
+    a.votes,
+    a.article_img_url,
+    COUNT(c.comment_id) AS comment_count  
+FROM
+    articles a
+LEFT JOIN
+    comments c
+ON
+    a.article_id = c.article_id
+GROUP BY
+    a.article_id,
+    a.title,
+    a.topic,
+    a.author,
+    a.created_at,
+    a.votes,
+    a.article_img_url
+    ORDER BY a.created_at;
+    `;
+
+    return db.query(query)
+        .then(data => {
+            return { articles: data.rows };
         });
 };
