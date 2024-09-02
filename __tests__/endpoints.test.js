@@ -263,4 +263,57 @@ describe("POST / api / articles /: article_id / comments", () => {
     });
 })
 
+describe("PATCH /api/articles/:article_id", () => {
+    test('200: should respond with the updated article when a valid vote increment is provided', () => {
+        return request(app)
+            .patch('/api/articles/1')
+            .send({ inc_votes: 1 })
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.article).toEqual(
+                    expect.objectContaining({
+                        article_id: 1,
+                        votes: expect.any(Number),
+                    })
+                );
+            });
+    });
+    test('200: should decrement votes when a negative value is provided', () => {
+        return request(app)
+            .patch('/api/articles/1')
+            .send({ inc_votes: -1 })
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.article.votes).toBeLessThanOrEqual(0);
+            });
+    });
+    test('400: should respond with an error when article_id is not a number', () => {
+        return request(app)
+            .patch('/api/articles/not-a-number')
+            .send({ inc_votes: 1 })
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe('Bad Request: Invalid article_id');
+            });
+    });
+    test('400: should respond with an error when inc_votes is not a number', () => {
+        return request(app)
+            .patch('/api/articles/1')
+            .send({ inc_votes: "not-a-number" })
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("Bad Request: 'inc_votes' must be a number");
+            });
+    });
+    test('404: should respond with an error when article_id does not exist', () => {
+        return request(app)
+            .patch('/api/articles/999999')
+            .send({ inc_votes: 1 })
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe('Article not found');
+            });
+    });
+})
+
 
