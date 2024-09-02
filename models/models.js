@@ -56,3 +56,16 @@ GROUP BY
             return { articles: data.rows };
         });
 };
+
+exports.fetchCommentsById = (id) => {
+    const query = `
+            SELECT comment_id, votes, created_at, author, body, article_id
+            FROM comments
+            WHERE article_id = $1
+            ORDER BY created_at DESC;
+            `;
+    return db.query(query, [id])
+        .then(({ rows }) => {
+            return {comments: rows};
+        });
+};

@@ -45,7 +45,6 @@ describe("GET /api/articles/:article_id", () => {
             .get("/api/articles/3")
             .expect(200)
             .then(({ body }) => {
-                console.log(body);
                 const article = body.article[0];
                 expect(article).toHaveProperty("article_id", 3);
                 expect(article).toHaveProperty("title");
@@ -111,7 +110,7 @@ describe("GET /api/articles", () => {
             .then(({ body }) => {
                 const articles = body.articles;
                 for (let i = 1; i < articles.length; i++) {
-                    expect(articles[i].created_at > articles[0].created_at)
+                    expect(articles[i].created_at > articles[0].created_at);
                 }
             });
     });
@@ -124,6 +123,66 @@ describe("GET /api/articles", () => {
                 body.articles.forEach(article => expect(article).not.toHaveProperty("body"));
             });
     });
+    test("Should contain relevant columns", () => {
+        return request(app)
+            .get("/api/articles")
+            .then(({ body }) => {
+                body.articles.forEach(article => {
+                    expect(article).toHaveProperty("author");
+                    expect(article).toHaveProperty("title");
+                    expect(article).toHaveProperty("article_id");
+                    expect(article).toHaveProperty("topic");
+                    expect(article).toHaveProperty("created_at");
+                    expect(article).toHaveProperty("votes");
+                    expect(article).toHaveProperty("article_img_url");
+                    expect(article).toHaveProperty("comment_count");
+                });
+            });
+    });
+    test("Invalid id should return a 404", () => {
+        return request(app)
+            .get("/api/articlez")
+            .expect(404);
+    });
 });
+
+describe("GET /api/articles/:article_id/comments", () => {
+    test("200: should return an array of comments for the given article_id, sorted by date descending", () => {
+        return request(app)
+            .get("/api/articles/1/comments")
+            .expect(200)
+            .then(({ body }) => {
+                console.log(body)
+                const { comments } = body;
+                expect(Array.isArray(comments)).toBe(true);
+                expect(comments.length).toBeGreaterThan(0);
+
+                comments.forEach((comment) => {
+                    expect(comment).toHaveProperty("comment_id");
+                    expect(comment).toHaveProperty("votes");
+                    expect(comment).toHaveProperty("created_at");
+                    expect(comment).toHaveProperty("author");
+                    expect(comment).toHaveProperty("body");
+                    expect(comment).toHaveProperty("article_id", 1);
+                });
+
+                for (let i = 1; i < comments.length; i++) {
+                    expect(comments[i].created_at > comments[0].created_at);
+                }
+            });
+    });
+    test("400: should return a 400 error when passed an invalid article_id", () => {
+        return request(app)
+            .get("/api/articles/not-a-number/comments")
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("Bad Request: Invalid article id");
+            });
+    });
+
+
+
+})
+
 
 
