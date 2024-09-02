@@ -3,7 +3,8 @@ const app = require('../app/app');
 const request = require("supertest");
 const db = require("../db/connection");
 const endpoint = require('../endpoints.json');
-
+const seed = require("../db/seeds/seed.js");
+const testData = require("../db/data/test-data/index");
 
 afterAll(() => db.end());
 
@@ -41,6 +42,7 @@ describe("GET /api", () => {
 
 describe("GET /api/articles/:article_id", () => {
     test("Should return an object containing data relevant to article_id", () => {
+
         return request(app)
             .get("/api/articles/3")
             .expect(200)
@@ -181,15 +183,14 @@ describe("GET /api/articles/:article_id/comments", () => {
 
 
 
-})
+});
 
-describe("POST / api / articles /: article_id / comments", () => {
+describe("POST/api/articles/:article_id/comments", () => {
     test("201: responds with the posted comment when valid data is provided", () => {
         const newComment = {
-            username: "cooljmessy",
+            username: "butter_bridge",
             body: "This is an insightful article. Thanks for sharing!"
         };
-
         return request(app)
             .post("/api/articles/1/comments")
             .send(newComment)
@@ -199,7 +200,7 @@ describe("POST / api / articles /: article_id / comments", () => {
                 expect(comment).toHaveProperty("comment_id");
                 expect(comment).toHaveProperty("votes", 0);
                 expect(comment).toHaveProperty("created_at");
-                expect(comment).toHaveProperty("author", "cooljmessy");
+                expect(comment).toHaveProperty("author", "butter_bridge");
                 expect(comment).toHaveProperty("body", "This is an insightful article. Thanks for sharing!");
                 expect(comment).toHaveProperty("article_id", 1);
             });
@@ -261,7 +262,7 @@ describe("POST / api / articles /: article_id / comments", () => {
                 expect(body.msg).toBe("Bad Request: Invalid article_id");
             });
     });
-})
+});
 
 describe("PATCH /api/articles/:article_id", () => {
     test('200: should respond with the updated article when a valid vote increment is provided', () => {
@@ -279,13 +280,15 @@ describe("PATCH /api/articles/:article_id", () => {
             });
     });
     test('200: should decrement votes when a negative value is provided', () => {
-        return request(app)
-            .patch('/api/articles/1')
-            .send({ inc_votes: -1 })
-            .expect(200)
-            .then(({ body }) => {
-                expect(body.article.votes).toBeLessThanOrEqual(0);
-            });
+        return seed(testData).then(() => {
+            return request(app)
+                .patch('/api/articles/1')
+                .send({ inc_votes: -2 })
+                .expect(200)
+                .then(({ body }) => {
+                    expect(body.article.votes).toBe(98);
+                });
+        });
     });
     test('400: should respond with an error when article_id is not a number', () => {
         return request(app)
@@ -314,6 +317,35 @@ describe("PATCH /api/articles/:article_id", () => {
                 expect(body.msg).toBe('Article not found');
             });
     });
-})
+});
+
+describe('DELETE /api/comments/:comment_id', () => {
+    test('204: should delete the comment and return no content', () => {
+        return seed(testData).then(() => {
+            return request(app)
+                .delete('/api/comments/3')
+                .expect(204);
+        });
+    });
+
+
+    test('404: should respond with an error if comment_id does not exist', () => {
+        return request(app)
+            .delete('/api/comments/999999')
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe('Comment not found');
+            });
+    });
+
+    test('400: should respond with an error if comment_id is not valid', () => {
+        return request(app)
+            .delete('/api/comments/not-a-number')
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe('Bad Request: Invalid comment_id');
+            });
+    });
+});
 
 
