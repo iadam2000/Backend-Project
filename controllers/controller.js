@@ -4,7 +4,8 @@ const {
     fetchArticleById,
     fetchArticles,
     fetchCommentsById,
-    insertCommentByArticleId
+    insertCommentByArticleId,
+    updateArticleVotes
 } = require('../models/models');
 
 exports.getTopics = (req, res) => {
@@ -38,11 +39,10 @@ exports.getCommentsById = (req, res) => {
     });
 };
 
-exports.postCommentByArticleId = (req, res, next) => { // Added next parameter here
+exports.postCommentByArticleId = (req, res, next) => {
     const { article_id } = req.params;
     const { username, body } = req.body;
 
-    // Check for missing required fields
     if (!username || !body) {
         return res.status(400).send({ msg: "Bad Request: 'username' and 'body' are required fields" });
     }
@@ -51,5 +51,26 @@ exports.postCommentByArticleId = (req, res, next) => { // Added next parameter h
         .then((comment) => {
             res.status(201).send({ comment });
         })
-        .catch(next);  // This will pass the error to the centralized error handler
+        .catch(next);
+};
+
+exports.patchArticleById = (req, res, next) => {
+    const { article_id } = req.params;
+    const { inc_votes } = req.body;
+
+    if (isNaN(Number(article_id))) {
+        return res.status(400).send({ msg: 'Bad Request: Invalid article_id' });
+    }
+
+    if (typeof inc_votes !== 'number') {
+        return res.status(400).send({ msg: "Bad Request: 'inc_votes' must be a number" });
+    }
+    updateArticleVotes(article_id, inc_votes)
+        .then((updatedArticle) => {
+            if (!updatedArticle) {
+                return res.status(404).send({ msg: "Article not found" });
+            }
+            res.status(200).send({ article: updatedArticle });
+        })
+        .catch(next);
 };

@@ -4,7 +4,8 @@ const {
     getArticleById,
     getArticles,
     getCommentsById,
-    postCommentByArticleId
+    postCommentByArticleId,
+    patchArticleById
 } = require('../controllers/controller');
 
 const express = require("express");
@@ -23,7 +24,7 @@ app.get("/api/articles/:article_id/comments", getCommentsById);
 
 app.post("/api/articles/:article_id/comments", postCommentByArticleId);
 
-
+app.patch('/api/articles/:article_id', patchArticleById);
 
 //Error handling below
 app.use((req, res) => {
