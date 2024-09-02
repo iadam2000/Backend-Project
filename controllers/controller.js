@@ -5,7 +5,8 @@ const {
     fetchArticles,
     fetchCommentsById,
     insertCommentByArticleId,
-    updateArticleVotes
+    updateArticleVotes,
+    removeCommentById
 } = require('../models/models');
 
 exports.getTopics = (req, res) => {
@@ -71,6 +72,23 @@ exports.patchArticleById = (req, res, next) => {
                 return res.status(404).send({ msg: "Article not found" });
             }
             res.status(200).send({ article: updatedArticle });
+        })
+        .catch(next);
+};
+
+exports.deleteCommentById = (req, res, next) => {
+    const { comment_id } = req.params;
+
+    if (isNaN(Number(comment_id))) {
+        return res.status(400).send({ msg: 'Bad Request: Invalid comment_id' });
+    }
+
+    removeCommentById(comment_id)
+        .then((result) => {
+            if (result.rowCount === 0) {
+                return res.status(404).send({ msg: 'Comment not found' });
+            }
+            res.status(204).send(); // No content to send back
         })
         .catch(next);
 };
