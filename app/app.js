@@ -2,7 +2,8 @@ const {
     getTopics,
     getApiDocs,
     getArticleById,
-    getArticles
+    getArticles,
+    getCommentsById
 } = require('../controllers/controller');
 
 const express = require("express");
@@ -17,12 +18,17 @@ app.get("/api/articles/:article_id", getArticleById);
 
 app.get("/api/articles", getArticles);
 
+app.get("/api/articles/:article_id/comments", getCommentsById);
+
 //Error handling below
 app.use((req, res) => {
     res.status(404).send({ msg: "404 - Endpoint not found" });
 });
 
 app.use((err, req, res, next) => {
+    if (err.code === '22P02') {
+        res.status(400).send({ msg: 'Bad Request: Invalid article_id' });
+    };
     console.error(err.stack);
     res.status(500).send({ msg: "Internal Server Error" });
 });

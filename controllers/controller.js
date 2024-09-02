@@ -2,7 +2,8 @@ const {
     fetchTopics,
     fetchApiDocs,
     fetchArticleById,
-    fetchArticles
+    fetchArticles,
+    fetchCommentsById
 } = require('../models/models');
 
 exports.getTopics = (req, res) => {
@@ -25,6 +26,13 @@ exports.getArticleById = (req, res) => {
 
 exports.getArticles = (req, res) => {
     fetchArticles().then(data => {
+        return res.status(200).send(data);
+    });
+};
+
+exports.getCommentsById = (req, res) => {
+    if (isNaN(req.params.article_id)) return res.status(400).send({ msg: "Bad Request: Invalid article id" });
+    fetchCommentsById(req.params.article_id).then(data => {
         return res.status(200).send(data);
     });
 };
