@@ -6,7 +6,8 @@ const {
     fetchCommentsById,
     insertCommentByArticleId,
     updateArticleVotes,
-    removeCommentById
+    removeCommentById,
+    fetchUsers
 } = require('../models/models');
 
 exports.getTopics = (req, res) => {
@@ -91,4 +92,13 @@ exports.deleteCommentById = (req, res, next) => {
             res.status(204).send(); // No content to send back
         })
         .catch(next);
+};
+
+exports.getUsers = (req, res, next) => {
+    fetchUsers()
+        .then(data => {
+            return res.status(200).send(data);
+        })
+        .catch(next);
+
 };

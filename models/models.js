@@ -96,4 +96,11 @@ exports.updateArticleVotes = (article_id, inc_votes) => {
 
 exports.removeCommentById = (comment_id) => {
     return db.query('DELETE FROM comments WHERE comment_id = $1 RETURNING *;', [comment_id]);
-}
+};
+
+exports.fetchUsers = () => {
+    return db.query(`SELECT * FROM users`)
+        .then(data => {
+            return { users: data.rows };
+        });
+};
