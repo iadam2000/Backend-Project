@@ -348,4 +348,41 @@ describe('DELETE /api/comments/:comment_id', () => {
     });
 });
 
+describe("GET /api/users", () => {
+    test('200: should respond with an array of users', () => {
+        return request(app)
+            .get('/api/users')
+            .expect(200)
+            .then(({ body }) => {
+                expect(Array.isArray(body.users)).toBe(true);
+                body.users.forEach(user => {
+                    expect(user).toHaveProperty('username');
+                    expect(user).toHaveProperty('name');
+                    expect(user).toHaveProperty('avatar_url');
+                });
+            });
+    });
+    test('404: should respond with not found when the route does not exist', () => {
+        return request(app)
+            .get('/api/userz') // Note the typo in the endpoint
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe('404 - Endpoint not found');
+            });
+    });
+    test('500: should respond with an internal server error if database connection fails', () => {
+        // You would typically mock the database connection to throw an error
+        jest.spyOn(db, 'query').mockImplementation(() => {
+            throw new Error('Database connection failed');
+        });
+
+        return request(app)
+            .get('/api/users')
+            .expect(500)
+            .then(({ body }) => {
+                expect(body.msg).toBe('Internal Server Error');
+            });
+    });
+})
+
 
