@@ -21,7 +21,46 @@ exports.fetchArticleById = (id) => {
         });
 };
 
-exports.fetchArticles = () => {
+exports.fetchArticles = (sort_by, order) => {
+
+    const allowedSortColumns = ["article_id", "created_at", "title", "votes", "author", "topic", "article_img_url"];
+    const allowedSortOrders = ["asc", "desc"];
+
+    // Ensure specified sort_by and order are valid
+    if (sort_by !== undefined && sort_by !== "") {
+        if (!allowedSortColumns.includes(sort_by)) {
+            return Promise.reject({ status: 400, msg: "Invalid sort_by column" });
+        }
+    }
+    if (order !== undefined && order !== "") {
+        if (!allowedSortOrders.includes(order)) {
+            return Promise.reject({ status: 400, msg: "Invalid order value" });
+        }
+    }
+
+    // Default case
+    let sortColumn = "created_at";
+    let sortOrder = "desc";
+
+    if (allowedSortColumns.includes(sort_by)) { sortColumn = sort_by; }
+    if (allowedSortOrders.includes(order)) { sortOrder = order; }
+
+    // Case 1 - nothing requested - return sorted by date ascending
+    if (sort_by === undefined && order === undefined) {
+        sortColumn = "created_at";
+        sortOrder = "asc";
+    }
+
+    // Case 2 - sort_by specified but order unspecified
+    if ((sort_by !== "" && sort_by !== undefined) && (order === undefined || order === "")) {
+        sortOrder = "desc";
+    }
+
+    // Case 3 - sort_by unspecified but order specified
+    if ((sort_by === undefined || sort_by === "") && (order !== undefined && order !== "")) {
+        sortColumn = "created_at";
+    }
+
 
     const query =
         `
@@ -48,7 +87,7 @@ GROUP BY
     a.created_at,
     a.votes,
     a.article_img_url
-    ORDER BY a.created_at;
+    ORDER BY ${sortColumn} ${sortOrder};
     `;
 
     return db.query(query)
