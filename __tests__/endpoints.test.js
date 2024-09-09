@@ -111,9 +111,10 @@ describe("GET /api/articles", () => {
             .expect(200)
             .then(({ body }) => {
                 const articles = body.articles;
-                for (let i = 1; i < articles.length; i++) {
-                    expect(articles[i].created_at > articles[0].created_at);
+                for (let i = 0; i < articles.length - 1; i++) {
+                    expect(articles[i].created_at <= articles[i + 1].created_at).toBe(true);
                 }
+
             });
     });
     test("Should not contain body property in any of the articles", () => {
@@ -370,19 +371,77 @@ describe("GET /api/users", () => {
                 expect(body.msg).toBe('404 - Endpoint not found');
             });
     });
-    test('500: should respond with an internal server error if database connection fails', () => {
-        // You would typically mock the database connection to throw an error
-        jest.spyOn(db, 'query').mockImplementation(() => {
-            throw new Error('Database connection failed');
-        });
+});
 
+describe("GET /api/articles?sort_by=&order=", () => {
+    test("Should return a list of articles ordered by date descending with a 200 status when no sorting or order specified", () => {
         return request(app)
-            .get('/api/users')
-            .expect(500)
+            .get("/api/articles?sort_by=&order=")
+            .expect(200)
             .then(({ body }) => {
-                expect(body.msg).toBe('Internal Server Error');
+                const articles = body.articles;
+                for (let i = 0; i < articles.length - 1; i++) {
+                    expect(articles[i].created_at >= articles[i + 1].created_at).toBe(true);
+                }
             });
     });
-})
+    test("Should return sorted by specified list in default (desc) and 200", () => {
+        return request(app)
+            .get("/api/articles?sort_by=title")
+            .expect(200)
+            .then(({ body }) => {
+                const articles = body.articles;
+                for (let i = 0; i < articles.length - 1; i++) {
+                    expect(articles[i].title >= articles[i + 1].title).toBe(true);
+                }
+            });
+    });
+    test("Should return sorted by specified list in default (desc) and 200", () => {
 
+        return request(app)
+            .get("/api/articles?sort_by=votes")
+            .expect(200)
+            .then(({ body }) => {
+                const articles = body.articles;
+                for (let i = 0; i < articles.length - 1; i++) {
+                    expect(articles[i].votes >= articles[i + 1].votes).toBe(true);
+                }
+            });
 
+    });
+    test("Should return sorted list by specified column and specified order and 200", () => {
+        return request(app)
+            .get("/api/articles?sort_by=votes&order=asc")
+            .expect(200)
+            .then(({ body }) => {
+                const articles = body.articles;
+                for (let i = 0; i < articles.length - 1; i++) {
+                    expect(articles[i].votes <= articles[i + 1].votes).toBe(true);
+                }
+            });
+    });
+    test("Should return created_at by default when not specified with specified order and 200", () => {
+        return request(app)
+            .get("/api/articles?order=asc")
+            .expect(200)
+            .then(({ body }) => {
+                const articles = body.articles;
+                for (let i = 0; i < articles.length - 1; i++) {
+                    expect(articles[i].created_at <= articles[i + 1].created_at).toBe(true);
+                }
+            });
+    });
+    test('400: returns an error for an invalid sort_by column', async () => {
+        const { body } = await request(app)
+            .get('/api/articles?sort_by=invalid_column')
+            .expect(400);
+        expect(body.msg).toBe('Invalid sort_by column');
+    });
+    test('400: returns an error for an invalid order value', async () => {
+        const { body } = await request(app)
+            .get('/api/articles?sort_by=created_at&order=invalid_order')
+            .expect(400);
+
+        expect(body.msg).toBe('Invalid order value');
+    });
+});

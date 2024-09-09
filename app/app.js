@@ -32,6 +32,7 @@ app.delete('/api/comments/:comment_id', deleteCommentById);
 
 app.get("/api/users", getUsers);
 
+
 //Error handling below
 app.use((req, res) => {
     res.status(404).send({ msg: "404 - Endpoint not found" });
@@ -40,7 +41,7 @@ app.use((req, res) => {
 app.use((err, req, res, next) => {
     if (err.status && err.msg) {
         res.status(err.status).send({ msg: err.msg });
-    } else if (err.code === '23503') {
+    }  else if (err.code === '23503') {
         // Foreign key violation (e.g., article_id or username does not exist)
         if (err.constraint === 'comments_article_id_fkey') {
             res.status(404).send({ msg: "Article not found" });
@@ -49,7 +50,8 @@ app.use((err, req, res, next) => {
         }
     } else if (err.code === '22P02') {
         res.status(400).send({ msg: 'Bad Request: Invalid article_id' });
-    } else {
+    }
+    else {
         res.status(500).send({ msg: "Internal Server Error" });
     }
 });
