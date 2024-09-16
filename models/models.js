@@ -21,7 +21,7 @@ exports.fetchArticleById = (id) => {
         });
 };
 
-exports.fetchArticles = (sort_by, order) => {
+exports.fetchArticles = (sort_by, order, topic) => {
 
     const allowedSortColumns = ["article_id", "created_at", "title", "votes", "author", "topic", "article_img_url"];
     const allowedSortOrders = ["asc", "desc"];
@@ -61,8 +61,7 @@ exports.fetchArticles = (sort_by, order) => {
         sortColumn = "created_at";
     }
 
-
-    const query =
+    let query =
         `
     SELECT
     a.article_id,
@@ -79,7 +78,16 @@ LEFT JOIN
     comments c
 ON
     a.article_id = c.article_id
-GROUP BY
+    `;
+
+    if (topic !== undefined) {
+        if (typeof topic !== 'string') {
+            return Promise.reject({ status: 400, msg: "Invalid topic" });
+        }
+        query += `WHERE a.topic = '${topic}' `;
+    }
+
+    query += `GROUP BY
     a.article_id,
     a.title,
     a.topic,
@@ -87,8 +95,8 @@ GROUP BY
     a.created_at,
     a.votes,
     a.article_img_url
-    ORDER BY ${sortColumn} ${sortOrder};
-    `;
+    ORDER BY ${sortColumn} ${sortOrder};`;
+
 
     return db.query(query)
         .then(data => {

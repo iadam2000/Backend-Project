@@ -445,3 +445,35 @@ describe("GET /api/articles?sort_by=&order=", () => {
         expect(body.msg).toBe('Invalid order value');
     });
 });
+
+describe('GET /api/articles?topic', () => {
+    it('should return all articles if no topic is specified', async () => {
+        const { body } = await request(app)
+            .get('/api/articles')
+            .expect(200);
+        expect(Array.isArray(body.articles)).toBe(true);
+    });
+
+    it('should return articles filtered by the topic', async () => {
+        const { body } = await request(app)
+            .get('/api/articles?topic=cats')
+            .expect(200);
+        expect(Array.isArray(body.articles)).toBe(true);
+        expect(body.articles.every(article => article.topic === 'cats')).toBe(true);
+    });
+
+    it('should return an empty array if no articles match the topic', async () => {
+        const { body } = await request(app)
+            .get("/api/articles?topic=nonExistentTopic")
+            .expect(200);
+    });
+
+    it('should return 400 if the topic parameter is not a string', async () => {
+        const { body } = await request(app)
+            .get('/api/articles?topic[]=arrayvalue')
+            .expect(400);
+    });
+
+    
+});
+
