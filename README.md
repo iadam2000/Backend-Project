@@ -1,6 +1,12 @@
 # 🛠️ Backend Project
 
-Welcome to the **Backend Project** repository! This project is a RESTful API built with Node.js, Express, and PostgreSQL. It provides core functionalities such as CRUD operations, user authentication, and more. Explore the hosted version and feel free to contribute, clone, or improve it!
+Welcome to my **Backend Project** repository! I'll be creating a forum database similar to Reddit.
+
+This project is a RESTful API built with Node.js, Express, and PostgreSQL. 
+
+It provides core functionalities such as CRUD operations, user authentication, and more. 
+
+Explore the hosted version and feel free to contribute, clone, or improve it!
 
 ## 🌐 Hosted Version
 
