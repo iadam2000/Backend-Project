@@ -14,10 +14,25 @@ exports.fetchApiDocs = () => {
 };
 
 exports.fetchArticleById = (id) => {
-    const query = `SELECT * FROM articles WHERE article_id = ${id}`;
+    const query = `
+    SELECT 
+        a.*,COUNT(c.comment_id) 
+    AS 
+        comment_count 
+    FROM 
+        articles a 
+    LEFT JOIN 
+        comments c 
+    ON 
+        a.article_id = c.article_id
+    WHERE
+        a.article_id = ${id}
+    GROUP BY
+        a.article_id;
+    `
     return db.query(query)
         .then(data => {
-            return { article: data.rows };
+            return {article: data.rows[0]};
         });
 };
 
