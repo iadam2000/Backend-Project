@@ -48,8 +48,11 @@ npm install
 ```
 
 ### 3. Create Environment Files 
-.env.development \n
+
+.env.development 
+
 .env.production
+
 .env.test
 
 For development: .env.development
