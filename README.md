@@ -38,3 +38,31 @@ To set up this project locally, follow the instructions below.
 ```bash
 git clone https://github.com/iadam2000/Backend-Project.git
 cd backend-project
+```
+### 2. Install Dependencies
+
+Make sure you have **Node.js** and **PostgreSQL** installed on your machine. Then, install the necessary dependencies by running:
+
+```bash
+npm install
+```
+
+### 3. Create Environment Files 
+.env.development
+.env.production
+.env.test
+
+For development: .env.development
+```bash
+PGDATABASE=nc_news
+```
+
+For testing: .env.test
+```bash
+PGDATABASE=nc_news_test
+```
+
+For development: .env.production
+```bash
+DATABASE_URL=postgresql://postgres.inkpgijddvxdrvqfasjc:northcoders123@aws-0-eu-central-1.pooler.supabase.com:6543/postgres
+```
