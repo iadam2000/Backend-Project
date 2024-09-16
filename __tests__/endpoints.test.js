@@ -47,15 +47,14 @@ describe("GET /api/articles/:article_id", () => {
             .get("/api/articles/3")
             .expect(200)
             .then(({ body }) => {
-                const article = body.article[0];
-                expect(article).toHaveProperty("article_id", 3);
-                expect(article).toHaveProperty("title");
-                expect(article).toHaveProperty("author");
-                expect(article).toHaveProperty("body");
-                expect(article).toHaveProperty("topic");
-                expect(article).toHaveProperty("created_at");
-                expect(article).toHaveProperty("votes");
-                expect(article).toHaveProperty("article_img_url");
+                expect(body.article).toHaveProperty("article_id", 3);
+                expect(body.article).toHaveProperty("title");
+                expect(body.article).toHaveProperty("author");
+                expect(body.article).toHaveProperty("body");
+                expect(body.article).toHaveProperty("topic");
+                expect(body.article).toHaveProperty("created_at");
+                expect(body.article).toHaveProperty("votes");
+                expect(body.article).toHaveProperty("article_img_url");
             });
     });
     test("Should return a 404 for non-existent article_IDs", () => {
@@ -474,6 +473,34 @@ describe('GET /api/articles?topic', () => {
             .expect(400);
     });
 
-    
+
 });
+
+describe("Get /api/articles/:id", () => {
+    test("Should return the comment count for queried article", async () => {
+        const { body } = await request(app)
+            .get("/api/articles/1")
+            .expect(200);
+        expect(body.article).toHaveProperty('comment_count');
+    });
+    test("Should return a 0 comment count when article has no comments", async () => {
+        const { body } = await request(app)
+            .get("/api/articles/2")
+            .expect(200);
+        expect(body.article).toHaveProperty('comment_count');
+        expect(Number(body.article.comment_count)).toBe(0);
+    });
+    test("Non-existent article should return a 404", async () => {
+        const { body } = await request(app)
+            .get("/api/articles/123456789")
+            .expect(404);
+        expect(body.msg).toBe("Article not found")
+    });
+    test("Invalid article format (e.g string) should return a 400", async () => {
+        const { body } = await request(app)
+            .get("/api/articles/asdfasd")
+            .expect(400);
+        expect(body.msg).toBe("Invalid article ID");
+    });
+})
 

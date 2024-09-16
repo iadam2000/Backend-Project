@@ -23,7 +23,7 @@ exports.getApiDocs = (req, res) => {
 exports.getArticleById = (req, res) => {
     if (isNaN(req.params.article_id)) return res.status(400).send({ msg: "Invalid article ID" });
     fetchArticleById(req.params.article_id).then(data => {
-        if (data.article.length === 0) return res.status(404).send({ msg: "Article not found" });
+        if (data.article === undefined) return res.status(404).send({ msg: "Article not found" });
         return res.status(200).send(data);
     });
 };
