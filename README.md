@@ -36,5 +36,5 @@ To set up this project locally, follow the instructions below.
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/backend-project.git
+git clone https://github.com/iadam2000/Backend-Project.git
 cd backend-project
