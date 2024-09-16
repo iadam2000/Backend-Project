@@ -47,7 +47,7 @@ Make sure you have **Node.js** and **PostgreSQL** installed on your machine. The
 npm install
 ```
 
-### 3. Create Environment Files 
+### 3. Create the Following Environment Files in the Root Folder
 
 .env.development 
 
@@ -55,17 +55,26 @@ npm install
 
 .env.test
 
-For development: .env.development
+### In each file, paste the following code:
+
+For development: 
 ```bash
 PGDATABASE=nc_news
 ```
 
-For testing: .env.test
+For testing: 
 ```bash
 PGDATABASE=nc_news_test
 ```
 
-For development: .env.production
+For development: 
 ```bash
 DATABASE_URL=postgresql://postgres.inkpgijddvxdrvqfasjc:northcoders123@aws-0-eu-central-1.pooler.supabase.com:6543/postgres
 ```
+
+### At this point, you're ready to run unit tests if you wish. From the root folder, run:
+```bash
+npm test __tests__/endpoints.test.js
+```
+
+
