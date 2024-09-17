@@ -9,9 +9,14 @@ const {
     deleteCommentById,
     getUsers
 } = require('../controllers/controller');
+const cors = require('cors');
+
+
 
 const express = require("express");
 const app = express();
+app.use(cors());
+
 app.use(express.json());
 
 app.get("/api/topics", getTopics);
@@ -41,7 +46,7 @@ app.use((req, res) => {
 app.use((err, req, res, next) => {
     if (err.status && err.msg) {
         res.status(err.status).send({ msg: err.msg });
-    }  else if (err.code === '23503') {
+    } else if (err.code === '23503') {
         // Foreign key violation (e.g., article_id or username does not exist)
         if (err.constraint === 'comments_article_id_fkey') {
             res.status(404).send({ msg: "Article not found" });
