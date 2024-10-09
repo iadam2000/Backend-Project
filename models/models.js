@@ -38,7 +38,7 @@ exports.fetchArticleById = (id) => {
 
 exports.fetchArticles = (sort_by, order, topic) => {
 
-    const allowedSortColumns = ["article_id", "created_at", "title", "votes", "author", "topic", "article_img_url"];
+    const allowedSortColumns = ["article_id", "created_at", "title", "votes", "author", "topic", "article_img_url", "comment_count"];
     const allowedSortOrders = ["asc", "desc"];
 
     // Ensure specified sort_by and order are valid
