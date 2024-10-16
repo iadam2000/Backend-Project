@@ -95,12 +95,13 @@ ON
     a.article_id = c.article_id
     `;
 
-    if (topic !== undefined) {
-        if (typeof topic !== 'string') {
-            return Promise.reject({ status: 400, msg: "Invalid topic" });
-        }
-        query += `WHERE a.topic = '${topic}' `;
+    if (topic && topic.trim() !== '') { // Check if topic is defined and not empty
+    if (typeof topic !== 'string') {
+        return Promise.reject({ status: 400, msg: "Invalid topic" });
     }
+    query += `WHERE a.topic = '${topic}' `;
+}
+
 
     query += `GROUP BY
     a.article_id,
