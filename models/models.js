@@ -86,6 +86,7 @@ exports.fetchArticles = (sort_by, order, topic) => {
     a.created_at,
     a.votes,
     a.article_img_url,
+    a.body,
     COUNT(c.comment_id) AS comment_count  
 FROM
     articles a
