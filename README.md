@@ -76,5 +76,5 @@ DATABASE_URL=postgresql://postgres.inkpgijddvxdrvqfasjc:northcoders123@aws-0-eu-
 ```bash
 npm test __tests__/endpoints.test.js
 ```
-
+Thanks!
 
