@@ -1,9 +1,8 @@
-# 🌐 Hosted Website
+## 🌐 Hosted Version
 
-Visit the site here: 
-```bash
-backend-project-u7dc.onrender.com/api
-```
+You can access the live version of the API here:  
+🔗 **[Backend Project Live API](https://backend-project-u7dc.onrender.com/api)**
+
 # 🛠️ Backend Project
 
 Welcome to my **Backend Project** repository! I'll be creating a forum database similar to Reddit.
@@ -13,11 +12,6 @@ This project is a RESTful API built with Node.js, Express, and PostgreSQL.
 It provides core functionalities such as CRUD operations, user authentication, and more. 
 
 Explore the hosted version and feel free to contribute, clone, or improve it!
-
-## 🌐 Hosted Version
-
-You can access the live version of the API here:  
-🔗 **[Backend Project Live API](https://backend-project-u7dc.onrender.com/api)**
 
 ---
 
