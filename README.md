@@ -1,3 +1,9 @@
+# 🌐 Hosted Website
+
+Visit the site here: 
+```bash
+backend-project-u7dc.onrender.com/api
+```
 # 🛠️ Backend Project
 
 Welcome to my **Backend Project** repository! I'll be creating a forum database similar to Reddit.
